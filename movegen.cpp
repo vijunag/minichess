@@ -1,4 +1,4 @@
-/*
+/* Author: Vijay Nag
  * Rook move generation
  *
  * The possible line N of attacks for a Rook is as shown below
@@ -184,10 +184,14 @@ void GenBishopBlockMasks()
       /*anti-diagnol up*/
       k=i;
       while(k>=0) {
+        if (k==0 || k==7 || k==11 || k==15)
+          break; //no anti-diagnols
         if (k==j) {
           while(k>=0) {
             ClearBit(bmap, 15-k);
             k=BISHOP_ANTIDIAG_UP(k);
+            if (k==3 || k==7 || k==11 || k==15)
+              break; //no anti-diagnols
           }
         }
         k=BISHOP_ANTIDIAG_UP(k);
@@ -197,13 +201,13 @@ void GenBishopBlockMasks()
       /*anti-diagnol down*/
       k=i;
       while(k<16) {
-        if (k==3 || k==7 || k==11 || k==15)
+        if (k==0 || k==4 || k==8 || k==12)
           break; //no anti-diagnols
         if (k==j) {
           while(k<16) {
             ClearBit(bmap, 15-k);
             k=BISHOP_ANTIDIAG_DOWN(k);
-            if (k==3 || k==7 || k==11 || k==15)
+            if (k==0 || k==4 || k==8 || k==12)
               break; //no anti-diagnols
           }
         }
