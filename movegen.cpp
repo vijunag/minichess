@@ -15,6 +15,8 @@
  */
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <movegen.h>
 
 #define ROOK_MOVE_UP(_i)   (_i-4)
 #define ROOK_MOVE_DOWN(_i) (_i+4)
@@ -68,10 +70,10 @@ uint16_t GenRookBlockMasks(void)
         continue;
       }
 
-      uint16_t horiz_rank=(blocks>>(4*(3-i)) & 0xF);
-      int k=i,idx=bitidx;
+      uint16_t horiz_rank=(blocks>>(4*(3-ROWIDX(i))) & 0xF);
+      int k=COLIDX(i),idx=bitidx;
       /*move in east direction*/
-      uint8_t b=0x8>>ROWIDX(i);
+      uint8_t b=0x8>>k;
       while (k<=3) {
         if (b&horiz_rank) {
           while(k<=3) {
@@ -85,8 +87,8 @@ uint16_t GenRookBlockMasks(void)
       }
 
       /*move in west direction*/
-      k=i,idx=bitidx;
-      b=0x8>>ROWIDX(i);
+      k=COLIDX(i),idx=bitidx;
+      b=0x8>>k;
       while (k>=0) {
         if (b&horiz_rank) {
           while(k>=0) {
@@ -218,6 +220,183 @@ void GenBishopBlockMasks()
   }
 }
 
+void PrintGameBoard(uint16_t b, uint16_t w)
+{
+  uint16_t mask=0x8000;
+
+  printf("\n");
+  for(int i=0;i<4;++i) {
+    for(int j=0;j<4;++j) {
+      if (mask&b) {
+        printf("P1 ");
+      } else if (mask&w) {
+        printf("P2 ");
+      }else {
+        printf("-- ");
+      }
+      mask>>=1;
+    }
+    printf("\n");
+  }
+}
+
+void TestRookMoves(uint16_t bb, uint16_t wb, uint16_t rook_pos)
+{
+  uint16_t blackboard = bb;
+  uint16_t whiteboard = wb;
+  uint16_t mask = 0x8000;
+  uint16_t oc_mask = 0xFFFF;
+  uint16_t row_idx = ROWIDX(rook_pos);
+  uint16_t col_idx = COLIDX(rook_pos);
+  uint16_t row_s_idx = rook_pos;
+  uint16_t move_vector = RookMoves[row_idx][col_idx];
+  uint16_t bvectors = move_vector;
+  uint16_t black_attacks;
+  uint16_t white_attacks;
+
+  printf("-----------Gameboard----------------\n");
+  PrintGameBoard(whiteboard, blackboard);
+
+  for (int i=0; i<4; ++i) {
+    for(int j=0;j<4; ++j) {
+       if (mask & blackboard) {
+         oc_mask &= RookMask[row_s_idx][i*4+j];
+       }
+       mask >>=1;
+    }
+  }
+  bvectors &= blackboard;
+  oc_mask &= move_vector;
+  oc_mask |= bvectors;
+  black_attacks = oc_mask;
+  printf("-----------Black attack moves-------\n");
+  PrintGameBoard(0,black_attacks);
+
+  mask=0x8000;
+  oc_mask=0xFFFF;
+  for (int i=0; i<4; ++i) {
+    for(int j=0;j<4; ++j) {
+       if (mask & whiteboard) {
+         oc_mask &= RookMask[row_s_idx][i*4+j];
+       }
+       mask >>=1;
+    }
+  }
+  white_attacks = move_vector & oc_mask;
+  printf("-----------White attack moves-------\n");
+  PrintGameBoard(white_attacks, 0);
+
+  printf("-----------Final Attack vector-------\n");
+  PrintGameBoard(white_attacks&black_attacks, 0);
+}
+
+void TestCase1(void)
+{
+ /*
+  *  0 0  R2  0
+  *  0 Q1 R1  0
+  *  0 0  B2  0
+  *  0 0  B1  0
+  */
+  TestRookMoves(0b0010000000100000, 0b0000011000000010, 6);
+
+ /*
+  *  R1 0  R2  0
+  *  K1 Q1 0   0
+  *  Q2 0  B2  0
+  *  0  0  B1  0
+  */
+  TestRookMoves(0b0010000010100000, 0b1000110000000010, 0);
+
+ /*
+  * 0  Q2  0  0
+  * 0  Q1  0  0
+  * R2 R1  B1 0
+  * 0  K2  K1 0
+  */
+  TestRookMoves(0b0100000010000100, 0b0000010001100010, 9);
+
+ /*
+  * 0  Q2  0  0
+  * 0  Q1  0  0
+  * R1 R2  B1 0
+  * 0  K2  K1 0
+  */
+  TestRookMoves(0b0100000001000100, 0b0000010010100010, 8);
+
+ /*
+  * 0  Q2  0  R1
+  * 0  Q1  0  0
+  * 0  R2  B1 0
+  * 0  K2  K1 0
+  */
+  TestRookMoves(0b0100000001000100, 0b0001010000100010, 3);
+
+ /*
+  * 0  Q2  0  0
+  * 0  Q1  0  0
+  * 0  R2  0  B1
+  * 0  K2  K1 R1
+  */
+  TestRookMoves(0b0100000001000100, 0b0000010000010011, 15);
+
+ /*
+  * 0  Q2  0  0
+  * 0  Q1  0  0
+  * 0  R2  0  R1
+  * 0  K2  K1 B2
+  */
+  TestRookMoves(0b0100000001000101, 0b0000010000010010, 11);
+
+ /*
+  * 0  Q2  0  0
+  * 0  Q1  0  0
+  * R2  0  0  R1
+  * 0  K2  K1 B2
+  */
+  TestRookMoves(0b0100000010000101, 0b0000010000010010, 11);
+
+ /*
+  * R1  0   0  0
+  * Q1  B1  0  0
+  * R2  0   0  0
+  * 0   0   0  0
+  */
+  TestRookMoves(0b000000001000000, 0b1000110000000000, 0);
+
+ /*
+  * 0   0   0  0
+  * Q2  B1  R1 R2
+  * K2  0   0  0
+  * 0   0   0  0
+  */
+  TestRookMoves(0b0000100110000000, 0b0000011000000000, 6);
+
+ /*
+  * 0   0   0  0
+  * Q2  0  0   R1
+  * K2  0   0  0
+  * 0   0   0  0
+  */
+  TestRookMoves(0b0000100010000000, 0b0000000100000000, 7);
+
+ /*
+  * 0   R1  0  B2
+  * Q2  K2  0  R2
+  * K2  0   0  K2
+  * 0   0   0  0
+  */
+  TestRookMoves(0b0001110110010000, 0b0100000000000000, 1);
+
+ /*
+  * 0   0   0  B1
+  * Q2  K1  0  R1
+  * K2  0   0  K2
+  * 0   0   0  0
+  */
+  TestRookMoves(0b0000100010010000, 0b0001010100000000, 7);
+}
+
 int main()
 {
   GenRookBlockMasks();
@@ -249,4 +428,6 @@ int main()
     }
   }
   printf("}\n");
+
+  TestCase1();
 }
