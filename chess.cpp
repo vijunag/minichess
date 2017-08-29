@@ -37,9 +37,50 @@ uint16_t KnightMoves[4][4]= {
   {0x428,0xA14,0x582,0x241}
 };
 
+uint16_t RookMask[16][16] = {
+{0xffff,0x8fff,0xcfff,0xefff,0xf777,0xffff,0xffff,0xffff,0xff77,0xffff,0xffff,0xffff,0xfff7,0xffff,0xffff,0xffff},
+{0x7fff,0xffff,0xcfff,0xefff,0xffff,0xfbbb,0xffff,0xffff,0xffff,0xffbb,0xffff,0xffff,0xffff,0xfffb,0xffff,0xffff},
+{0x7fff,0x3fff,0xffff,0xefff,0xffff,0xffff,0xfddd,0xffff,0xffff,0xffff,0xffdd,0xffff,0xffff,0xffff,0xfffd,0xffff},
+{0x7fff,0x3fff,0x1fff,0xffff,0xffff,0xffff,0xffff,0xfeee,0xffff,0xffff,0xffff,0xffee,0xffff,0xffff,0xffff,0xfffe},
+{0x7fff,0xffff,0xffff,0xffff,0xffff,0xf8ff,0xfcff,0xfeff,0xff77,0xffff,0xffff,0xffff,0xfff7,0xffff,0xffff,0xffff},
+{0xffff,0xbfff,0xffff,0xffff,0xf7ff,0xffff,0xfcff,0xfeff,0xffff,0xffbb,0xffff,0xffff,0xffff,0xfffb,0xffff,0xffff},
+{0xffff,0xffff,0xdfff,0xffff,0xf7ff,0xf3ff,0xffff,0xfeff,0xffff,0xffff,0xffdd,0xffff,0xffff,0xffff,0xfffd,0xffff},
+{0xffff,0xffff,0xffff,0xefff,0xf7ff,0xf3ff,0xf1ff,0xffff,0xffff,0xffff,0xffff,0xffee,0xffff,0xffff,0xffff,0xfffe},
+{0x7fff,0xffff,0xffff,0xffff,0x77ff,0xffff,0xffff,0xffff,0xffff,0xff8f,0xffcf,0xffef,0xfff7,0xffff,0xffff,0xffff},
+{0xffff,0xbfff,0xffff,0xffff,0xffff,0xbbff,0xffff,0xffff,0xff7f,0xffff,0xffcf,0xffef,0xffff,0xfffb,0xffff,0xffff},
+{0xffff,0xffff,0xdfff,0xffff,0xffff,0xffff,0xddff,0xffff,0xff7f,0xff3f,0xffff,0xffef,0xffff,0xffff,0xfffd,0xffff},
+{0xffff,0xffff,0xffff,0xefff,0xffff,0xffff,0xffff,0xeeff,0xff7f,0xff3f,0xff1f,0xffff,0xffff,0xffff,0xffff,0xfffe},
+{0x7fff,0xffff,0xffff,0xffff,0x77ff,0xffff,0xffff,0xffff,0x777f,0xffff,0xffff,0xffff,0xffff,0xfff8,0xfffc,0xfffe},
+{0xffff,0xbfff,0xffff,0xffff,0xffff,0xbbff,0xffff,0xffff,0xffff,0xbbbf,0xffff,0xffff,0xfff7,0xffff,0xfffc,0xfffe},
+{0xffff,0xffff,0xdfff,0xffff,0xffff,0xffff,0xddff,0xffff,0xffff,0xffff,0xdddf,0xffff,0xfff7,0xfff3,0xffff,0xfffe},
+{0xffff,0xffff,0xffff,0xefff,0xffff,0xffff,0xffff,0xeeff,0xffff,0xffff,0xffff,0xeeef,0xfff7,0xfff3,0xfff1,0xffff},
+};
+
+uint16_t BishopMask[16][16] = {
+{0xffff,0xffff,0xffff,0xffff,0xffff,0xfbde,0xffff,0xffff,0xffff,0xffff,0xffde,0xffff,0xffff,0xffff,0xffff,0xfffe},
+{0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfdef,0xffff,0xffff,0xffff,0xffff,0xffef,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xffff,0xffff,0xffff,0xfbff,0xffff,0xfef7,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfdbf,0xffff,0xffff,0xffbf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xbfff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffbd,0xffff,0xffff,0xffff,0xffff,0xfffd,0xffff},
+{0x7fff,0xffff,0xdfff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffde,0xffff,0xffff,0xffff,0xffff,0xfffe},
+{0xffff,0xbfff,0xffff,0x6fff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffbf,0xffff,0xffef,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xdfff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffdb,0xffff,0xfff7,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xdfff,0xffff,0xffff,0xdbff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfffb,0xffff,0xffff},
+{0xffff,0xffff,0xffff,0x6fff,0xf7ff,0xffff,0xfdff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfffd,0xffff},
+{0x7fff,0xffff,0xffff,0xffff,0xffff,0x7bff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfffb,0xffff,0xfffe},
+{0xffff,0xbfff,0xffff,0xffff,0xffff,0xffff,0xbdff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xfffd,0xffff},
+{0xffff,0xffff,0xffff,0x6fff,0xffff,0xffff,0xfdff,0xffff,0xffff,0xfdbf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xef7f,0xffff,0xffdf,0xffff,0xffff,0xffff,0xffff,0xffff},
+{0xffff,0xffff,0xffff,0xffff,0xf7ff,0xffff,0xffff,0xffff,0xffff,0xf7bf,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff},
+{0x7fff,0xffff,0xffff,0xffff,0xffff,0x7bff,0xffff,0xffff,0xffff,0xffff,0x7bdf,0xffff,0xffff,0xffff,0xffff,0xffff},
+};
+
 uint16_t (*moves[])[4] = { NULL, KnightMoves, BishopMoves, RookMoves, QueenMoves};
 
+#define MAX(a,b) (a) > (b) ? (a) : (b)
+#define MIN(a,b) (a) < (b) ? (a) : (b)
 #define BSR(_val) ((__builtin_ffs(_val))-1)
+#define RBSR(_val) (15-BSR(_val))
 
 #define ROWIDX(r) (3-BSR(r)/4)
 #define COLIDX(c) (3-(BSR(c))%4)
@@ -120,70 +161,136 @@ int GameScore(Board b, Board w, int minimize)
   return minimize ? -score : score;
 }
 
-uint16_t GetMoves(PieceType p, Board &b)
+uint16_t GenSlidingMoves(PieceType p, Board &mb, Board &ob,
+                         uint16_t rank, uint16_t qmask=0)
 {
-  uint16_t (*m)[4] = moves[p];
-  int r = ROWIDX(b.bm[p]);
-  int c = COLIDX(b.bm[p]);
-  uint16_t legal_moves = m[r][c];
+  uint16_t (*m)[4]=moves[p];
+  uint16_t (*move_mask)[16] = ROOK == p ? RookMask : BishopMask;
+  uint16_t r, c;
+  uint16_t mv, mv_mask=0xFFFF, mv_w_mask=0xFFFF;
+  uint16_t blackboard=ob.getbits();
+  uint16_t whiteboard=mb.getbits();
+  uint16_t mask=0x8000;
 
-  return ~(legal_moves&b.getbits())&legal_moves;
+  if (qmask) {
+    r=ROWIDX(qmask);
+    c=COLIDX(qmask);
+  } else {
+    r=ROWIDX(mb.bm[p]);
+    c=COLIDX(mb.bm[p]);
+  }
+  mv=m[r][c];
+
+  for(int i=0; i<4; ++i) {
+    for(int j=0; j<4; ++j) {
+      if (mask&blackboard) {
+          mv_mask&=move_mask[rank][i*4+j];
+      }
+      if (mask&whiteboard) {
+          mv_w_mask&=move_mask[rank][i*4+j];
+      }
+      mask>>=1;
+    }
+  }
+  mv_mask=(mv_mask & mv)|(mv & blackboard);
+  mv_w_mask &= mv;
+  return mv_mask & mv_w_mask;
+}
+
+uint16_t GetMoves(Board &mb, Board &ob, uint16_t &kmoves,
+    uint16_t &rmoves, uint16_t &bmoves, uint16_t &qmoves)
+{
+  uint16_t (*m)[4]=moves[KNIGHT];
+  uint16_t r, c, legal_moves, rook_rank, bishop_rank;
+  uint16_t rook_mv, bishop_mv, rook_mask, bishop_mask;
+  uint16_t rook_w_mask = 0xFFFF, bishop_w_mask = 0xFFFF;
+  uint16_t blackboard=ob.getbits();
+  uint16_t whiteboard=mb.getbits();
+  uint16_t mask=0xFFFF;
+
+  /*Knight moves*/
+  if (mb.bm[KNIGHT]) {
+    m=moves[KNIGHT];
+    r=ROWIDX(mb.bm[KNIGHT]);
+    c=COLIDX(mb.bm[KNIGHT]);
+    legal_moves=m[r][c];
+    kmoves = ~(legal_moves&mb.getbits())&legal_moves;
+  }
+
+  /*Rook moves*/
+  if (mb.bm[ROOK]) {
+    rmoves = GenSlidingMoves(ROOK, mb, ob, RBSR(mb.bm[ROOK])) ^ mb.bm[ROOK];
+  }
+
+  /*Bishop moves*/
+  if (mb.bm[BISHOP]) {
+    bmoves = GenSlidingMoves(BISHOP, mb, ob, RBSR(mb.bm[BISHOP])) ^ mb.bm[BISHOP];
+  }
+
+  /*Queen moves*/
+  if (mb.bm[QUEEN]) {
+    qmoves = (GenSlidingMoves(ROOK, mb, ob, RBSR(mb.bm[QUEEN]), mb.bm[QUEEN]) |
+              GenSlidingMoves(BISHOP, mb, ob, RBSR(mb.bm[QUEEN]),mb.bm[QUEEN])) ^ mb.bm[QUEEN];
+  }
 }
 
 Board fbb, fwb; //final black & white boards
-#define MINIMAX(_score, _b, _w, _m, OP, _fb)                \
-({                                                          \
-  int _best = _score;                                       \
-  for (PieceType p=KNIGHT; p<MAX;p=(PieceType)(((int)p)+1)){\
-    if (!w.bm[p]) {                                         \
-      continue;                                             \
-    }                                                       \
-    uint16_t moves = GetMoves(p, _w);                       \
-    for(uint16_t mask=0x8000;mask;mask>>=1) {               \
-      if (moves&mask) {                                     \
-        Board nb=_w;                                        \
-        nb.set(p, mask);                                    \
-        score=minimax(_b, nb, depth-1, _m);                 \
-        if (score OP _best) {                               \
-          _best = score;                                    \
-          _fb = nb;                                         \
-        }                                                   \
-      }                                                     \
-    }                                                       \
-  }                                                         \
- return (_best);                                            \
- })
+#define FOREARCHMOVES(p,_moves,_wb,_bb,max)                           \
+  if (_moves) {                                                       \
+    for(uint16_t mask=0x8000;mask;mask>>=1) {                         \
+      if (_moves&mask) {                                              \
+        if (max) {                                                    \
+          Board nb=_wb;                                               \
+          nb.set(p, mask);                                            \
+          score=MAX(score, minimax(nb,_bb,alpha,beta,depth-1, max));  \
+          alpha=MAX(alpha,score);                                     \
+          if (beta<=alpha)                                            \
+            goto done1;                                               \
+        } else {                                                      \
+          Board nb=_bb;                                               \
+          nb.set(p, mask);                                            \
+          score=MIN(score,minimax(_wb, nb,alpha,beta,depth-1, max));  \
+          beta=MIN(beta,score);                                       \
+          if (beta<=alpha)                                            \
+            goto done2;                                               \
+        }                                                             \
+      }                                                               \
+    }                                                                 \
+  }                                                                   \
 
-int minimax(Board b, Board w, int depth, int maximize)
+#define MINIMAX(_wb,_bb,max)              \
+ FOREARCHMOVES(QUEEN, qmoves,_wb, _bb,max); \
+ FOREARCHMOVES(KNIGHT,kmoves,_wb, _bb,max); \
+ FOREARCHMOVES(ROOK,  rmoves,_wb, _bb,max); \
+ FOREARCHMOVES(BISHOP,bmoves,_wb, _bb,max);
+
+void PrintGameBoard(Board b, Board w, int =-1);
+int minimax(Board b, Board w, int alpha, int beta, int depth, int maximize)
 {
   int score = GameScore(b, w, maximize);
 
-  if ((WINSCORE==abs(score))||(LOSESCORE==abs(score))||!depth) {
+#if DEBUG
+  printf("Ply: %d\n", depth);
+  PrintGameBoard(b, w, maximize);
+#endif /*DEBUG*/
+  if ((WINSCORE==score)||(LOSESCORE==score)||!depth) {
     return score;
   }
 
   if (maximize) {
-#if 0
-    int _best = LOSESCORE;
-    for (PieceType p=KNIGHT; p<MAX;p=(PieceType)(((int)p)+1)) {
-      uint16_t moves = GetMoves(p, w);
-      for(uint16_t mask=0x8000;mask;mask>>=1) {
-        if (moves&mask) {
-          Board nb=w;
-          nb.set(p, mask);
-          score=minimax(b, nb, depth-1, 0);
-          if (score >= _best) {
-            _best = score;
-            nextboard = nb;
-          }
-        }
-      }
-    }
-    return (_best);
-#endif
-    MINIMAX(LOSESCORE,b,w,0,>=,fwb);
+    int score=LOSESCORE;
+    uint16_t qmoves=0, kmoves=0, bmoves=0, rmoves=0;
+    GetMoves(w, b, kmoves, rmoves, bmoves, qmoves);
+    MINIMAX(w,b,0);
+done1:
+    return (score);
   } else {
-    MINIMAX(WINSCORE,w,b,1,<,fbb);
+    int score = WINSCORE;
+    uint16_t qmoves=0, kmoves=0, bmoves=0, rmoves=0;
+    GetMoves(b,w, kmoves, rmoves, bmoves, qmoves);
+    MINIMAX(w,b,1);
+done2:
+    return (score);
   }
 }
 
@@ -239,7 +346,7 @@ void PrintPossibleMoves(PieceType p)
       PrintMoveBoard(p, i, j);
 }
 
-void PrintGameBoard(Board b, Board w)
+void PrintGameBoard(Board b, Board w, int maximize)
 {
   uint16_t mask=0x8000;
   uint16_t bw=b.getbits();
@@ -250,7 +357,9 @@ void PrintGameBoard(Board b, Board w)
     for(int j=0;j<4;++j) {
       int bscore = GetScore(b, mask);
       int wscore = GetScore(w, mask);
-      if(bscore) {
+      if (maximize>-1 && bscore && wscore) {
+        printf("%c%c ", maximize == 1 ? 'b' : 'w', GetPieceName((PieceType)wscore));
+      } else if(bscore) {
         printf("b%c ", GetPieceName((PieceType)bscore));
       } else if (wscore) {
         printf("w%c ", GetPieceName((PieceType)wscore));
@@ -300,7 +409,7 @@ int main() {
     }
     fbb = black;
     fwb = white;
-    int score = minimax(black, white, m, 1);
+    int score = minimax(black, white, LOSESCORE, WINSCORE, m, 1);
     if (WINSCORE==score) {
       printf("YES\n");
     } else {
@@ -309,4 +418,3 @@ int main() {
   }
   return 0;
 }
-
