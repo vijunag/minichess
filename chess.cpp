@@ -525,7 +525,7 @@ int main(int argc, char **argv) {
     } else {
       printf("NO\n");
     }
-#ifdef SELFGAME
+#ifdef PLAYSELF
     int k=10;
     score=0;
     printf("Game start\n");
@@ -540,7 +540,7 @@ int main(int argc, char **argv) {
         score = minimax(fbb, fwb, LOSESCORE, WINSCORE, m, 1);
       k--;
     }
-#endif /*DEBUG*/
+#endif /*PLAYSELF*/
   }
   return 0;
 }
