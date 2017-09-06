@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <movegen.h>
+//#include <movegen.h>
 
 #define ROOK_MOVE_UP(_i)   (_i-4)
 #define ROOK_MOVE_DOWN(_i) (_i+4)
@@ -28,7 +28,7 @@
 #define BSR(_val) ((__builtin_ffs(_val))-1)
 #define ROWIDX(r) (r>>2)
 #define COLIDX(r) (r&0x3)
-#define SERIALIZE(j) (1<<(15-j))
+#define SERIALIZE(j) (1<<(15-(j)))
 
 uint16_t rookMask[16][16];
 uint16_t bishopMask[16][16];
@@ -43,7 +43,7 @@ uint16_t RookMoves[4][4] = {
 
 uint16_t BishopMoves[4][4] = {
   {0x8421,0x4A10,0x2580,0x1248},
-  {0x4842,0xA4A1,0x5258,0x2128},
+  {0x4842,0xA4A1,0x5258,0x2124},
   {0x2484,0x1A4A,0x8525,0x4212},
   {0x1248,0x01A4,0x852,0x8421}
 };
@@ -147,73 +147,73 @@ void GenBishopBlockMasks()
         continue;
       }
 
-#define TRAVERSE(OP, val, _dir, up_or_down)   \
-  k=i;                                        \
-  while(k OP val) {                           \
-   if (k==j) {                                \
-     while(k OP val) {                        \
-       ClearBit(bmap, 15-k);                  \
-       k=BISHOP_##_dir##_##up_or_down(k);     \
-     }                                        \
-   }                                          \
-   k=BISHOP_DIAG_UP(k);                       \
- }
-
       /*diagnol up*/
       k=i;
-      while(k>=0) {
+      int clear=0;
+      int pos;
+      while(k>=0)  {
         if (k==j) {
-          while(k>=0) {
-            ClearBit(bmap, 15-k);
-            k=BISHOP_DIAG_UP(k);
-          }
+          clear = 1;
         }
-        k=BISHOP_DIAG_UP(k);
+        if (clear) {
+          ClearBit(bmap, 15-k);
+        }
+        pos=BISHOP_DIAG_UP(k);
+        if (ROWIDX(pos)!=ROWIDX(k)-1) {
+          break;
+        }
+        k=pos;
       }
 
       /*diagnol down*/
       k=i;
+      clear=0;
       while(k<16) {
         if (k==j) {
-          while(k<16) {
-            ClearBit(bmap, 15-k);
-            k=BISHOP_DIAG_DOWN(k);
-          }
+          clear = 1;
         }
-        k=BISHOP_DIAG_DOWN(k);
+        if (clear) {
+          ClearBit(bmap, 15-k);
+        }
+        pos=BISHOP_DIAG_DOWN(k);
+        if (ROWIDX(pos)!=ROWIDX(k)+1) {
+          break;
+        }
+        k=pos;
       }
 
       /*anti-diagnol up*/
       k=i;
+      clear=0;
       while(k>=0) {
-        if (k==0 || k==7 || k==11 || k==15)
-          break; //no anti-diagnols
         if (k==j) {
-          while(k>=0) {
-            ClearBit(bmap, 15-k);
-            k=BISHOP_ANTIDIAG_UP(k);
-            if (k==3 || k==7 || k==11 || k==15)
-              break; //no anti-diagnols
-          }
+          clear = 1;
         }
-        k=BISHOP_ANTIDIAG_UP(k);
+        if (clear) {
+          ClearBit(bmap, 15-k);
+        }
+        pos=BISHOP_ANTIDIAG_UP(k);
+        if (ROWIDX(pos)!=ROWIDX(k)-1) {
+          break;
+        }
+        k=pos;
       }
-
 
       /*anti-diagnol down*/
       k=i;
+      clear=0;
       while(k<16) {
-        if (k==0 || k==4 || k==8 || k==12)
-          break; //no anti-diagnols
         if (k==j) {
-          while(k<16) {
-            ClearBit(bmap, 15-k);
-            k=BISHOP_ANTIDIAG_DOWN(k);
-            if (k==0 || k==4 || k==8 || k==12)
-              break; //no anti-diagnols
-          }
+          clear = 1;
         }
-        k=BISHOP_ANTIDIAG_DOWN(k);
+        if (clear) {
+          ClearBit(bmap, 15-k);
+        }
+        pos=BISHOP_ANTIDIAG_DOWN(k);
+        if (ROWIDX(pos)!=ROWIDX(k)+1) {
+          break;
+        }
+        k=pos;
       }
       bishopMask[i][j] = bmap;
     }
@@ -260,14 +260,12 @@ void TestRookMoves(uint16_t bb, uint16_t wb, uint16_t rook_pos)
   for (int i=0; i<4; ++i) {
     for(int j=0;j<4; ++j) {
        if (mask & blackboard) {
-         oc_mask &= RookMask[row_s_idx][i*4+j];
+         oc_mask &= rookMask[row_s_idx][i*4+j] | SERIALIZE(i*4+j);
        }
        mask >>=1;
     }
   }
-  bvectors &= blackboard;
   oc_mask &= move_vector;
-  oc_mask |= bvectors;
   black_attacks = oc_mask;
   printf("-----------Black attack moves-------\n");
   PrintGameBoard(0,black_attacks);
@@ -277,7 +275,7 @@ void TestRookMoves(uint16_t bb, uint16_t wb, uint16_t rook_pos)
   for (int i=0; i<4; ++i) {
     for(int j=0;j<4; ++j) {
        if (mask & whiteboard) {
-         oc_mask &= RookMask[row_s_idx][i*4+j];
+         oc_mask &= rookMask[row_s_idx][i*4+j];
        }
        mask >>=1;
     }
@@ -395,6 +393,92 @@ void TestCase1(void)
   * 0   0   0  0
   */
   TestRookMoves(0b0000100010010000, 0b0001010100000000, 7);
+
+ /*
+  * 0   0   0  R2
+  * Q2  K1  0  B2
+  * K2  0   0  0
+  * 0   0   0  R1
+  */
+  TestRookMoves(0b0001100110000000, 0b0000010000000001, 15);
+
+ /*
+  * 0   0   0  R2
+  * Q2  K1  0  B2
+  * K2  0   0  0
+  * R2  B2   0  R1
+  */
+  TestRookMoves(0b0001100110001100, 0b0000010000000001, 15);
+
+  /*
+  -- -- -- wQ
+  -- bQ -- --
+  -- -- -- --
+  wR -- -- --
+  */
+  TestRookMoves(0b0000010000000000, 0b0001000000001000, 3);
+}
+
+void TestBishopMoves(uint16_t bb, uint16_t wb, uint16_t bishop_pos)
+{
+  uint16_t blackboard = bb;
+  uint16_t whiteboard = wb;
+  uint16_t mask = 0x8000;
+  uint16_t oc_mask = 0xFFFF;
+  uint16_t row_idx = ROWIDX(bishop_pos);
+  uint16_t col_idx = COLIDX(bishop_pos);
+  uint16_t row_s_idx = bishop_pos;
+  uint16_t move_vector = BishopMoves[row_idx][col_idx];
+  uint16_t bvectors = move_vector;
+  uint16_t black_attacks;
+  uint16_t white_attacks;
+
+  printf("-----------Gameboard----------------\n");
+  PrintGameBoard(whiteboard, blackboard);
+
+  for (int i=0; i<4; ++i) {
+    for(int j=0;j<4; ++j) {
+       if (mask & blackboard) {
+         oc_mask &= bishopMask[row_s_idx][i*4+j] | SERIALIZE(i*4+j);
+       }
+       mask >>=1;
+    }
+  }
+  oc_mask &= move_vector;
+  black_attacks = oc_mask;
+  printf("-----------Black attack moves-------\n");
+  PrintGameBoard(0,black_attacks);
+
+  mask=0x8000;
+  oc_mask=0xFFFF;
+  for (int i=0; i<4; ++i) {
+    for(int j=0;j<4; ++j) {
+       if (mask & whiteboard) {
+         oc_mask &= bishopMask[row_s_idx][i*4+j];
+       }
+       mask >>=1;
+    }
+  }
+  white_attacks = move_vector & oc_mask;
+  printf("-----------White attack moves-------\n");
+  PrintGameBoard(white_attacks, 0);
+
+  printf("-----------Final Attack vector-------\n");
+  PrintGameBoard(white_attacks&black_attacks, 0);
+}
+
+void TestCase2(void)
+{
+  uint16_t bb=0b0000010000000000;
+  uint16_t wb=0b0001000000001000;
+
+  /*
+  -- -- -- wQ
+  -- bQ -- --
+  -- -- -- --
+  wR -- -- --
+  */
+  TestBishopMoves(bb, wb, 3);
 }
 
 int main()
@@ -430,4 +514,6 @@ int main()
   printf("}\n");
 
   TestCase1();
+
+  TestCase2();
 }
