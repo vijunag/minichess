@@ -398,12 +398,13 @@ void  GetMoves(Board &mb, Board &ob, Moves &mm){
   }
 }
 
-#ifdef DEBUG
-#define STOREBESTMOVE(_b, _nb, op) \
-({                                 \
- if (score op v) {                 \
-    _b = _nb;                      \
- }                                 \
+#ifdef PLAYSELF
+int g_depth = 0;
+#define STOREBESTMOVE(_b, _nb, op)        \
+({                                        \
+ if ((score op val)&&(g_depth==depth)) {  \
+    _b = _nb;                             \
+ }                                        \
 })
 #else
 #define STOREBESTMOVE(_b,_nb, op)
@@ -437,10 +438,13 @@ Board fbb, fwb; //final black & white boards
               nwb.clear(nbb.getbits()); /*black captures*/             \
             }                                                          \
             val=minimax(nbb,nwb,alpha,beta,depth-1,_max);              \
-            score=func(score,val);                                     \
             if (max) {                                                 \
+              STOREBESTMOVE(fwb, nwb, <);                              \
+              score=func(score,val);                                     \
               alpha=func(alpha,score);                                 \
             } else {                                                   \
+              STOREBESTMOVE(fbb, nbb, >=);                             \
+              score=func(score,val);                                     \
               beta=func(beta,score);                                   \
             }                                                          \
             if (beta<=alpha) {                                         \
@@ -454,7 +458,7 @@ Board fbb, fwb; //final black & white boards
     return (score);                                                    \
 
 #ifdef DEBUG
-int g_debug = 0;
+int g_debug = 0
 #endif /*DEBUG*/
 int minimax(Board b, Board w, int alpha, int beta, int depth, int maximize)
 {
@@ -531,14 +535,28 @@ int main(int argc, char **argv) {
     printf("Game start\n");
     PrintGameBoard(black, white, 1); //First is maximizing player
     Board pb = black;
-    while (k || (LOSESCORE==score) || (WINSCORE==score)) {
-        printf("Player 1 white's move\n");
-        PrintGameBoard(pb, fwb, 1);
-        printf("Player 2 black's move\n");
-        PrintGameBoard(fbb, fwb, 0);
-        pb = fbb;
-        score = minimax(fbb, fwb, LOSESCORE, WINSCORE, m, 1);
-      k--;
+    Board pw = white;
+    g_depth = m;
+    while (k) {
+      score = minimax(pb, pw, LOSESCORE, WINSCORE, m, 1);
+      printf("Player 1 white's move\n");
+      pw=fwb;
+      pb.clear(pw.getbits());
+      PrintGameBoard(pb, fwb, 1);
+      if(!pb.qu) {
+        printf("Black Queen has been captured\n");
+        break;
+      }
+      score = minimax(pb,pw,LOSESCORE, WINSCORE, m, 0);
+      printf("Player 2 black's move\n");
+      pb=fbb;
+      pw.clear(pb.getbits());
+      PrintGameBoard(pb, pw, 0);
+      if (!pw.qu) {
+        printf("White Queen has been captured\n");
+        break;
+      }
+      k=k-2;
     }
 #endif /*PLAYSELF*/
   }
