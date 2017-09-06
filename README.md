@@ -1,11 +1,12 @@
 # minichess
 
-A 4X4 chess engine that can be used to analyze game given a game
+A 4X4 chess engine that can be used to analyze a given game
 ================================================================
 
 Game Rules:
 -----------
 This chess engine took birth while I was attempting to solve simplified chess problem on HackerRank(https://www.hackerrank.com/challenges/simplified-chess-engine/problem)
+
 The game rules are as follows
 1) Each player has at-least one Queen, at most 2 Rooks and at most 2 minor pieces i.e Bishop & Knight.
 2) The game is always started by a white player.
