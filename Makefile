@@ -3,7 +3,7 @@ all: movegen chess chess2
 ifeq ($(SELFGAME), )
 CFLAGS +=
 else
-CFLAGS +=-DSELFGAME
+CFLAGS +=-DPLAYSELF
 endif
 
 movegen: movegen.cpp
