@@ -440,11 +440,11 @@ Board fbb, fwb; //final black & white boards
             val=minimax(nbb,nwb,alpha,beta,depth-1,_max);              \
             if (max) {                                                 \
               STOREBESTMOVE(fwb, nwb, <);                              \
-              score=func(score,val);                                     \
+              score=func(score,val);                                   \
               alpha=func(alpha,score);                                 \
             } else {                                                   \
               STOREBESTMOVE(fbb, nbb, >=);                             \
-              score=func(score,val);                                     \
+              score=func(score,val);                                   \
               beta=func(beta,score);                                   \
             }                                                          \
             if (beta<=alpha) {                                         \
