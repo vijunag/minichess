@@ -1,6 +1,6 @@
 # minichess
 
-A 4X4 chess engine that can be used to analyze a given game
+A 4X4 chess engine for analyzing a game
 ================================================================
 
 Game Rules:
@@ -10,7 +10,8 @@ This chess engine took birth while I was attempting to solve simplified chess pr
 The game rules are as follows
 1) Each player has at-least one Queen, at most 2 Rooks and at most 2 minor pieces i.e Bishop & Knight.
 2) The game is always started by a white player.
-3) The engine is supposed to answer if white can win in "m" number of moves.
+3) The engine is supposed to answer "YES" if white can win(black queen can be captured) in "m" number of moves.
+4) Even black plays optimal moves.
 
 Source Tree structure:
 ---------------------
