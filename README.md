@@ -22,7 +22,7 @@ Source tree consists of the following
  4) input.<files> - Sample test cases for this engine.
 
 How does ir it work ?
-_____________________
+---------------------
  1) A bit board is maintained for representing positions of various black and white pieces.
  2) For a 4X4 board, using uint16_t should suffice. 
  3) White and black boards are seperately maintained. Game board at any point in time is bitwise "OR" of white & black board.
