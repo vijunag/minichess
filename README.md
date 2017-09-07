@@ -28,7 +28,7 @@ How does ir it work ?
  3) White and black boards are seperately maintained. Game board at any point in time is bitwise "OR" of white & black board.
  4) The move vectors and occlusion masks table for sliding pieces (bishop&rook) are generated offline.
  5) Queen moves are determined by doing bitwise "OR" of rook and bishop moves.
- 6) The crux of the engine is minimax. Minimax is run for a givem depth for maximizing the outcome and minimizing the loss.
+ 6) The crux of the engine is minimax. Minimax is run for a given depth for maximizing the outcome and minimizing the loss.
  7) Alpha, beta pruning is inplemented for pruning the search space.
  8) Game score at any point in time is white board score minus the black board score.
  9) A board score is sum of weights of its pieces with Queen having the highest rank and Knight having the lowest rank.
