@@ -21,7 +21,7 @@ Source tree consists of the following
  3) Makefile - A simple makefile for building the engine
  4) input.<files> - Sample test cases for this engine.
 
-How does ir it work ?
+How does it work ?
 ---------------------
  1) A bit board is maintained for representing positions of various black and white pieces.
  2) For a 4X4 board, using uint16_t should suffice. 
